@@ -7,17 +7,15 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue';
 import http from '../../utils/http';
-
+import { useStore } from  '../../store/index'
 defineComponent({
     name: "LoginView",
 })
 
-http.post('users/login', {
-    "email": "huangrong@imooc.com",
-    "pass": "huangrong"
-}).then((res) => {
-    console.log(res, "login");
-    
+const store = useStore();
+
+store.dispatch('users/login').then((res) => {
+    console.log(res);
 })
 
 </script>
