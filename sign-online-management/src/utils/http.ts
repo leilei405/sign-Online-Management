@@ -43,22 +43,22 @@ const http: Http = {
         return instance.get(url, {
             params: data,
           ...config
-        })
+        }).then(res => res.data)
     },
     post(url, data, config){
-        return instance.post(url, data, config)
+        return instance.post(url, data, config).then(res => res.data)
     },
     put(url, data, config){
-        return instance.put(url, data, config)
+        return instance.put(url, data, config).then(res => res.data)
     },
     patch(url, data, config){
-        return instance.patch(url, data, config)
+        return instance.patch(url, data, config).then(res => res.data)
     },
     delete(url, data, config){
         return instance.delete(url, {
             params: data,
           ...config
-        })
+        }).then(res => res.data)
     },
 }
 
