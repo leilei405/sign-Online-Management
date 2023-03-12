@@ -1,19 +1,83 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
+// 使用懒加载方式引入
+const Home = () => import('@/views/Home/Home.vue');
+const Check = () => import('@/views/Check/Check.vue');
+const Sign = () => import('@/views/Sign/Sign.vue');
+const Login = () => import('@/views/Login/Login.vue');
+const Exception = () => import('@/views/Exception/Exception.vue');
+const Apply = () => import('@/views/Apply/Apply.vue');
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    menu?: boolean;
+    title?: string;
+    icon?: string;
+    auth?: boolean;
+  }
+}
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: Home,
+    meta: {
+      menu: true,
+      title: '首页-考勤管理',
+      icon: 'document-copy',
+      auth: true
+    },
+    children: [
+      {
+        path: '/check',
+        name: 'check',
+        component: Check,
+        meta: {
+          menu: true,
+          title: '我的考勤审批',
+          icon: 'finished',
+          auth: true
+        },
+      },
+      {
+        path: '/sign',
+        name:'sign',
+        component: Sign,
+        meta: {
+          menu: true,
+          title: '签到-在线打卡',
+          icon: 'calendar',
+          auth: true
+        },
+      },
+      {
+        path: '/exception',
+        name: 'exception',
+        component: Exception,
+        meta: {
+          menu: true,
+          title: '异常考勤查询',
+          icon: 'warning',
+          auth: true
+        },
+      },
+      {
+        path: '/apply',
+        name: 'apply',
+        component: Apply,
+        meta: {
+          menu: true,
+          title: '添加考勤审批',
+          icon: 'document-add',
+          auth: true
+        },
+      }
+    ]
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/login',
+    name: 'login',
+    component: Login
   }
 ]
 

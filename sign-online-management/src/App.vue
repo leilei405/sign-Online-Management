@@ -1,8 +1,5 @@
 <template>
-  <div>
-    hello world testing
-    <el-button>我是按钮</el-button>
-  </div>
+  <router-view></router-view>
 </template>
 
 <style lang="scss">
