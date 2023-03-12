@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
-import http from '../../utils/http';
 import { useStore } from  '../../store/index'
 defineComponent({
     name: "LoginView",
