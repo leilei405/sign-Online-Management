@@ -40,11 +40,17 @@
 
 <script setup lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
-// import { useStore } from  '../../store/index
+import { FormInstance, FormRules } from 'element-plus'
+import { useStore } from  '@/store';
+import { useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
 defineComponent({
     name: "LoginView",
 })
+
+const store = useStore();
+const router = useRouter();
+
 // 测试账号序列
 let i = 1;
 
@@ -79,10 +85,14 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate((valid) => {
     if (valid) {
-      console.log('submit!', ruleForm)
-    } else {
-      console.log('error submit!')
-      return false
+      store.dispatch('users/login', ruleForm).then((res) => {
+        if (+res.errcode === 0) {
+            store.commit('users/SET_TOKEN', res.token || '')
+            ElMessage.success('登录成功')
+            router.push('/');
+        }
+        return ElMessage.error(res.errmsg || '登录失败请重试！')
+      })
     }
   })
 }
