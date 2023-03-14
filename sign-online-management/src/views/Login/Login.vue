@@ -90,8 +90,9 @@ const submitForm = (formEl: FormInstance | undefined) => {
             store.commit('users/SET_TOKEN', res.token || '')
             ElMessage.success('登录成功')
             router.push('/');
+        } else {
+            ElMessage.error(res.errmsg || '登录失败请重试！')
         }
-        return ElMessage.error(res.errmsg || '登录失败请重试！')
       })
     }
   })
