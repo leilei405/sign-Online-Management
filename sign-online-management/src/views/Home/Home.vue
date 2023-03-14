@@ -1,5 +1,6 @@
 <template>
     <div>
+        主页
         <router-view></router-view>
     </div>
 </template>

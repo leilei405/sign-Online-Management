@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+
+import store from '@/store';
+import type { StateAll } from '@/store';
+(store.state as StateAll).users.token;  // 使用as 断言成stateAll
 
 // 使用懒加载方式引入
 const Home = () => import('@/views/Home/Home.vue');
@@ -84,6 +88,25 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+// 全局守卫
+router.beforeEach((to, from, next) => {
+  // 拿到token
+  const token = (store.state as StateAll).users.token;
+  if (to.meta.auth) {
+    if (token) {
+      next();
+    } else {
+      next('/login');
+    }
+  } else {
+    if (token && to.path === '/login') {
+      next('/');
+    } else {
+      next();
+    }
+  }
 })
 
 export default router
