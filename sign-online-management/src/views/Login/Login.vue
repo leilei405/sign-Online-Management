@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
 import { FormInstance, FormRules } from 'element-plus'
-import { useStore } from  '@/store';
+import { useStore } from  '../../store';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 defineComponent({

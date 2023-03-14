@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-
+import _ from 'lodash'
 import store from '@/store';
 import type { StateAll } from '@/store';
 (store.state as StateAll).users.token;  // 使用as 断言成stateAll
@@ -94,9 +94,16 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // 拿到token
   const token = (store.state as StateAll).users.token;
-  if (to.meta.auth) {
+  const infos = (store.state as StateAll).users.infos;
+  if (to.meta.auth && _.isEmpty(infos)) {
     if (token) {
-      next();
+      store.dispatch('users/infos').then((res) => {
+        console.log(res, '---res---');
+        if (+res.errcode === 0) {
+          store.commit('users/SET_INFOS', res.infos);
+          next();
+        }
+      });
     } else {
       next('/login');
     }
