@@ -12,7 +12,9 @@
         </el-aside>
         <!-- 内容区域 -->
         <el-main>
+            <!-- 面包屑 -->
             <home-breadcrumb></home-breadcrumb>
+            <!-- 主体main -->
             <home-main></home-main>
         </el-main>
       </el-container>

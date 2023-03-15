@@ -25,6 +25,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'home',
     component: Home,
+    redirect: '/sign', // 重定向到签到页
     meta: {
       menu: true,
       title: '首页-考勤管理',
@@ -98,7 +99,6 @@ router.beforeEach((to, from, next) => {
   if (to.meta.auth && _.isEmpty(infos)) {
     if (token) {
       store.dispatch('users/infos').then((res) => {
-        console.log(res, '---res---');
         if (+res.errcode === 0) {
           store.commit('users/SET_INFOS', res.infos);
           next();
