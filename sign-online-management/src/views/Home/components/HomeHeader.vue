@@ -5,8 +5,8 @@
         </span>
         <span class="home-header-title">在线考勤系统</span>
         <el-dropdown>
-            <el-badge :value="3" class="home-header-sound">
-                <el-icon ><Bell /></el-icon>
+            <el-badge :value="3">
+                <el-icon :size="20"><Bell /></el-icon>
             </el-badge>
             <template #dropdown>
                 <el-dropdown-menu>
@@ -15,7 +15,7 @@
             </template>
         </el-dropdown>
         <el-dropdown>
-            <el-space >
+            <el-space class="home-header-sound">
                 <el-avatar src="http://api.h5ke.top/uploads/626c7236e0c7edf6ce507708.png" />冯雷雷
             </el-space>
             <template #dropdown>
@@ -51,9 +51,8 @@
         font-size: 18px;
         margin-right: auto;
     }
-    .el-dropdown {
+    .home-header-sound {
         margin-left: 20px;
-        margin-top: 5px;
     }
 }
 </style>
