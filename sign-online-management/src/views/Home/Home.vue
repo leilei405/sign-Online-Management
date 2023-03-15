@@ -21,10 +21,10 @@
 
 <script setup lang="ts">
 import { defineComponent } from 'vue';
-import HomeHeader from './components/HomeHeader.vue';
-import HomeAside from './components/HomeAside.vue';
-import HomeMain from './components/HomeMain.vue';
-import HomeBreadcrumb from './components/HomeBreadcrumb.vue';
+import HomeHeader from '@/views/Home/components/HomeHeader.vue';
+import HomeAside from '@/views/Home/components/HomeAside.vue';
+import HomeMain from '@/views/Home/components/HomeMain.vue';
+import HomeBreadcrumb from '@/views/Home/components/HomeBreadcrumb.vue';
 defineComponent({
     name: "HomeView",
 })
