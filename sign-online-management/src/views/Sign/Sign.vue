@@ -32,6 +32,7 @@ import { defineComponent, ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 const store = useRouter();
 
+// 跳转异常页
 const  handleException = () => {
     store.push('/exception');
 }
