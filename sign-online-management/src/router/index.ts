@@ -34,7 +34,7 @@ const routes: Array<RouteRecordRaw> = [
     },
     children: [
       {
-        path: '/check',
+        path: 'check',
         name: 'check',
         component: Check,
         meta: {
@@ -45,7 +45,7 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: '/sign',
+        path: 'sign',
         name:'sign',
         component: Sign,
         meta: {
@@ -56,7 +56,7 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: '/exception',
+        path: 'exception',
         name: 'exception',
         component: Exception,
         meta: {
@@ -67,7 +67,7 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: '/apply',
+        path: 'apply',
         name: 'apply',
         component: Apply,
         meta: {

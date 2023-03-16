@@ -16,12 +16,12 @@
         </el-dropdown>
         <el-dropdown>
             <el-space class="home-header-sound">
-                <el-avatar src="http://api.h5ke.top/uploads/626c7236e0c7edf6ce507708.png" />冯雷雷
+                <el-avatar :src="String(head)" />{{ name }}
             </el-space>
             <template #dropdown>
                 <el-dropdown-menu>
                     <el-dropdown-item>个人中心</el-dropdown-item>
-                    <el-dropdown-item>安全退出</el-dropdown-item>
+                    <el-dropdown-item @click="logout">安全退出</el-dropdown-item>
                 </el-dropdown-menu>
             </template>
         </el-dropdown>
@@ -29,6 +29,20 @@
 </template>
 
 <script setup lang="ts">
+import { useStore } from '../../../store';
+import { computed } from 'vue'
+const store = useStore();
+// 头像
+const head = computed(() => store.state.users.infos.head);
+// 名字
+const name = computed(() => store.state.users.infos.name);
+// 退出功能
+const logout = () => {
+    // 首先清空token
+    store.commit('users/REMOVE_TOKEN');
+    // 再跳转到登录页面
+    window.location.href = '/login';
+}
 
 </script>
 
