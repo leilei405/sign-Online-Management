@@ -50,7 +50,7 @@ enum DetailKey {
     miss = '漏打卡',
     late = '迟到',
     early = '早退',
-    lateAndEarly = '迟到并早退',
+    lateAndEarly = '迟到并早退'
 }
 
 const detailValue = reactive({
