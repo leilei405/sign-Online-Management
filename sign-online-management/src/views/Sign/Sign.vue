@@ -1,3 +1,6 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <template>
     <div>
         <el-descriptions border direction="vertical" :column="9">
@@ -33,9 +36,10 @@
 
 <script setup lang="ts">
 import { ElMessage } from 'element-plus';
-import { defineComponent, ref, reactive, computed } from 'vue';
+import { defineComponent, ref, reactive, computed, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../../store';
+import { toZero } from '@/utils/common';
 const router = useRouter();
 const store = useStore();
 
@@ -47,7 +51,8 @@ const  handleException = () => {
 defineComponent({
     name: "SignView",
 })
-
+const signsInfos = computed(() => store.state.signs.infos)
+const usersInfos = computed(() => store.state.users.infos)
 const date = ref(new Date());
 const year = date.value.getFullYear();
 const month = ref(date.value.getMonth() + 1)
@@ -78,8 +83,50 @@ const detailState = reactive({
     text: '正常' as '正常' | '异常'
 })
 
-const signsInfos = computed(() => store.state.signs.infos)
-const usersInfos = computed(() => store.state.users.infos)
+// 只要依赖发生改变 watchEffect 触发一次  类似于react中的useEffect(() => {},[t])
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+watchEffect((reset) => {
+    // 分类  先拿到信息 detail
+    const detailMonth = ((signsInfos.value.detail as {[index: string]: unknown})[toZero(month.value)] as {[index: string]: unknown});
+    for(const attr in detailMonth) {
+        switch (detailMonth[attr]) {
+            case DetailKey.normal:
+                detailValue.normal++
+                break;
+            case DetailKey.absent:
+                detailValue.absent++
+            break;
+            case DetailKey.miss:
+                detailValue.miss++
+            break;
+            case DetailKey.late:
+                detailValue.late++
+            break;
+            case DetailKey.lateAndEarly:
+                detailValue.lateAndEarly++
+            break;
+            default:
+                break;
+        }
+    }
+
+    for(const attr in detailValue) {
+        if (attr !== 'normal' && detailValue[attr as  keyof typeof detailValue] !== 0) {
+            detailState.type = 'danger';
+            detailState.text = '异常';
+        }
+    }
+
+    // 需要重置
+    reset(() => {
+        detailState.type = 'success';
+        detailState.text = '正常';
+        for (const attr in detailValue) {
+            detailValue[attr as keyof typeof detailValue] = 0;
+        }
+    })
+})
+
 
 // 签到状态
 const renderDate = (day: string) => {
@@ -88,6 +135,7 @@ const renderDate = (day: string) => {
 
 // 时间
 const renderTime = (day: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ year, month, date ] = day.split('-');
     const ret = ((signsInfos.value.time as {
         [index: string]: unknown
