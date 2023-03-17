@@ -111,7 +111,6 @@ const router = createRouter({
 
 // 全局守卫
 router.beforeEach((to, from, next) => {
-  console.log(2222);
   // 拿到token
   const token = (store.state as StateAll).users.token;
   const infos = (store.state as StateAll).users.infos;
