@@ -1,6 +1,6 @@
 <template>
-    <!-- :default-active="route.fullPath"  跳转到某一项菜单 -->
-    <el-menu :default-active="route.fullPath" router>
+    <!-- :default-active="route.fullPath"  跳转到某一项菜单  fullPath 会匹配他一个整体  path不会匹配携带的参数 -->
+    <el-menu :default-active="route.path" router>
         <el-sub-menu  v-for="item in menus" :key="item.path" :index="item.path">
             <template #title>
                 <el-icon><component :is="item.meta?.icon"></component></el-icon>

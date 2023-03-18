@@ -1,6 +1,3 @@
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <template>
     <div>
         <el-descriptions border direction="vertical" :column="9">
@@ -42,11 +39,6 @@ import { useStore } from '../../store';
 import { toZero } from '@/utils/common';
 const router = useRouter();
 const store = useStore();
-
-// 跳转异常页
-const  handleException = () => {
-    router.push('/exception');
-}
 
 defineComponent({
     name: "SignView",
@@ -127,6 +119,13 @@ watchEffect((reset) => {
     })
 })
 
+// 跳转异常页
+const  handleException = () => {
+    router.push({
+        path: '/exception',
+        query: { month: month.value },
+    });
+}
 
 // 签到状态
 const renderDate = (day: string) => {

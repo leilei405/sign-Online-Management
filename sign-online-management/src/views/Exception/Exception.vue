@@ -40,13 +40,23 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router'
 defineComponent({
     name: "ExceptionView",
 })
+const route = useRoute();
+const router = useRouter();
 const date = new Date();
 const year = date.getFullYear();
-const month = ref(date.getMonth() + 1);
+const month = ref(Number(route.query.month) || date.getMonth() + 1);
+
+
+watch (month, () => {
+    router.push({
+        query: { month: month.value }
+    })
+})
 
 const activities = [
   {
