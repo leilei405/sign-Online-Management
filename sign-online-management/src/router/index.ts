@@ -83,6 +83,23 @@ const routes: Array<RouteRecordRaw> = [
           icon: 'warning',
           auth: true
         },
+        // 路由独享守卫
+        beforeEnter(to, from, next) {
+          const userInfos = (store.state as StateAll).users.infos;
+          const signsInfos = (store.state as StateAll).signs.infos;
+          if (_.isEmpty(signsInfos)) {
+            store.dispatch('signs/getTime', { userid: userInfos._id }).then((res) => {
+              if (+res.errcode === 0) {
+                store.commit('signs/updateInfos', res.infos);
+                next();
+              } else {
+                ElMessage.error(res.errmsg || '用户打卡信息获取失败')
+              }
+            })
+          }else {
+            next();
+          }
+        }
       },
       {
         path: 'apply',

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="exception-title">
-            <el-button type="primary">异常处理</el-button>
+            <el-button type="primary" @click="handleToApply">异常处理</el-button>
             <el-space>
                 <el-button plain>{{ year }}年</el-button>
                 <el-select v-model="month">
@@ -13,10 +13,10 @@
             <el-col :span="12">
                 <el-empty v-if="false" description="暂无异常考勤" />
                 <el-timeline v-else>
-                    <el-timeline-item v-for="(activity, index) in activities" :key="index" timestamp="考勤异常详情" placement="top">
+                    <el-timeline-item v-for="item in arrStatus" :key="item[0]" :timestamp=" year + '/' + month + '/' + item[0]" placement="top">
                         <el-card>
-                            <h4>旷工</h4>
-                            <p class="exceptInfo">考勤详情：暂无打卡记录</p>
+                            <h4>{{ item[1] }}</h4>
+                            <p class="exceptInfo">考勤详情：{{ renderTime(item[0]) }}</p>
                         </el-card>
                     </el-timeline-item>
                 </el-timeline>
@@ -40,8 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router'
+import { useStore} from '@/store';
+import { toZero } from '@/utils/common';
 defineComponent({
     name: "ExceptionView",
 })
@@ -50,6 +52,26 @@ const router = useRouter();
 const date = new Date();
 const year = date.getFullYear();
 const month = ref(Number(route.query.month) || date.getMonth() + 1);
+const store = useStore();
+const signsInfos = computed(() => store.state.signs.infos);  // 考勤信息
+
+const ret = ((signsInfos.value.detail as {[index: string]: unknown} )[toZero(month.value)] as {[index: string]: unknown});  // 考勤状态  旷工  迟到  正常
+
+// 将ret转为数组？  Object.entries
+const arrStatus = computed(() => 
+    Object.entries(ret).filter((item) => item[1] !== "正常出勤").sort()
+);
+
+const renderTime = (day: string) => {
+    const time = ((signsInfos.value.time as {[index: string]: unknown} )[toZero(month.value)] as {[index: string]: unknown})[day];
+    if (Array.isArray(time)) {
+        return time.join('-');
+    } else {
+        return '暂无打卡记录';
+    }
+}
+
+console.log(arrStatus, 'array status');
 
 
 watch (month, () => {
@@ -57,6 +79,10 @@ watch (month, () => {
         query: { month: month.value }
     })
 })
+
+const handleToApply = () => {
+    router.push('/apply');
+}
 
 const activities = [
   {
