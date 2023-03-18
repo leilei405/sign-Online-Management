@@ -111,6 +111,22 @@ const routes: Array<RouteRecordRaw> = [
           icon: 'document-add',
           auth: true
         },
+        beforeEnter(to, from, next) {
+          const userInfos = (store.state as StateAll).users.infos;
+          const checksApplyList = (store.state as StateAll).checks.applyList;
+          if (_.isEmpty(checksApplyList)) {
+            store.dispatch('checks/getApplyList', { applicantid: userInfos._id }).then((res) => {
+              if (+res.errcode === 0) {
+                store.commit('checks/updateApplyList', res.rets);
+                next();
+              } else {
+                ElMessage.error(res.errmsg || '审批信息获取失败')
+              }
+            })
+          }else {
+            next();
+          }
+        }
       }
     ]
   },
