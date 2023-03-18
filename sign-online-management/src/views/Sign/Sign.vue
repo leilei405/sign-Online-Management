@@ -2,7 +2,7 @@
     <div>
         <el-descriptions border direction="vertical" :column="9">
             <el-descriptions-item label="月份">{{ month }}月</el-descriptions-item>
-            <el-descriptions-item v-for="value, key in DetailKey" :key="key" :label="value">
+            <el-descriptions-item v-for="(value, key) in DetailKey" :key="key" :label="value">
                 {{ detailValue[key] }}
             </el-descriptions-item>
             <el-descriptions-item label="操作">
@@ -32,11 +32,11 @@
 </template>
 
 <script setup lang="ts">
+import { defineComponent, computed, watchEffect, ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
-import { defineComponent, ref, reactive, computed, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '../../store';
-import { toZero } from '@/utils/common';
+import { toZero } from '../../utils/common';
 const router = useRouter();
 const store = useStore();
 
@@ -59,7 +59,7 @@ enum DetailKey {
     lateAndEarly = '迟到并早退'
 }
 
-// 次数
+// 考勤状态各个状态的次数  如迟到几次  早退几次
 const detailValue = reactive({
     normal: 0,
     absent: 0,
@@ -162,7 +162,6 @@ const handleSignsOnline = () => {
 const handleChange = () => {
     date.value = new Date(`${year}-${month.value}`)
 }
-
 
 </script>
 

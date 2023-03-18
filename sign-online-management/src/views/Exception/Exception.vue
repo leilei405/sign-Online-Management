@@ -40,10 +40,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue';
+import { defineComponent, computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router'
-import { useStore} from '@/store';
-import { toZero } from '@/utils/common';
+import { useStore} from '../../store';
+import { toZero } from '../../utils/common';
 defineComponent({
     name: "ExceptionView",
 })
