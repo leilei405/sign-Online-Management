@@ -93,7 +93,6 @@ const dialogVisible = ref(false);  // 对话框初始值  隐藏\
 // 获取审批人
 const usersInfo = computed(() => store.state.users.infos);
 const approver = computed(() => usersInfo.value.approver as {[index: string]: unknown});
-console.log(approver.value);
 
 // 审批状态筛选功能
 const checksApplyList = computed(() => store.state.checks.applyList.filter((item) => (
@@ -194,7 +193,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
                 ElMessage.error('审批添加失败')
             }
         });
-        console.log('大部分是否不打算', ruleForm);
     } else {
         console.log('error submit');
         return false;

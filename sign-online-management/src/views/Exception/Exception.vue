@@ -11,7 +11,7 @@
         </div>
         <el-row :gutter="20">
             <el-col :span="12">
-                <el-empty v-if="false" description="暂无异常考勤" />
+                <el-empty v-if="arrStatus.length === 0" description="暂无异常考勤" />
                 <el-timeline v-else>
                     <el-timeline-item v-for="item in arrStatus" :key="item[0]" :timestamp=" year + '/' + month + '/' + item[0]" placement="top">
                         <el-card>
@@ -23,13 +23,13 @@
                 
             </el-col>
             <el-col :span="12">
-                <el-empty v-if="false" description="暂无申请审批" />
+                <el-empty v-if="applyListMonth.length === 0" description="暂无申请审批" />
                 <el-timeline v-else>
-                    <el-timeline-item v-for="(activity, index) in activities" :key="index" timestamp="事假" placement="top">
+                    <el-timeline-item v-for="(item) in applyListMonth" :key="item._id" :timestamp="item.reason" placement="top">
                         <el-card>
-                            <h4>已通过</h4>
-                            <p class="exceptInfo">申请日期：</p>
-                            <p class="exceptInfo">申请详情：</p>
+                            <h4>{{ item.state }}</h4>
+                            <p class="exceptInfo">申请日期：{{ item.time[0] }}-{{ item.time[1] }}</p>
+                            <p class="exceptInfo">申请详情：{{ item.note }}</p>
                         </el-card>
                     </el-timeline-item>
                 </el-timeline>
@@ -54,6 +54,12 @@ const year = date.getFullYear();
 const month = ref(Number(route.query.month) || date.getMonth() + 1);
 const store = useStore();
 const signsInfos = computed(() => store.state.signs.infos);  // 考勤信息
+//  审批信息列表
+const applyListMonth = computed(() => store.state.checks.applyList.filter((item) => {
+    const startTime = (item.time as string[])[0].split(' ')[0].split('-');
+    const endTime = (item.time as string[])[1].split(' ')[0].split('-');
+    return startTime[1] <= toZero(month.value) && endTime[1] >= toZero(month.value)
+}))
 
 const ret = ((signsInfos.value.detail as {[index: string]: unknown} )[toZero(month.value)] as {[index: string]: unknown});  // 考勤状态  旷工  迟到  正常
 
@@ -71,9 +77,6 @@ const renderTime = (day: string) => {
     }
 }
 
-console.log(arrStatus, 'array status');
-
-
 watch (month, () => {
     router.push({
         query: { month: month.value }
@@ -84,20 +87,6 @@ const handleToApply = () => {
     router.push('/apply');
 }
 
-const activities = [
-  {
-    content: 'Event start',
-    timestamp: '2018-04-15',
-  },
-  {
-    content: 'Approved',
-    timestamp: '2018-04-13',
-  },
-  {
-    content: 'Success',
-    timestamp: '2018-04-11',
-  },
-]
 </script>
 
 <style scoped lang="scss">
