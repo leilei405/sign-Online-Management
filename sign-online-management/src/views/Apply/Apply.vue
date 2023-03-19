@@ -65,7 +65,7 @@
                     />
                 </el-form-item>
                 <el-form-item label="时间" prop="note">
-                    <el-input type="textarea" placeholder="请输入备注" :autosize="{ minRows: 4, maxRows: 6 }" />
+                    <el-input v-model="ruleForm.note" type="textarea" placeholder="请输入备注" :autosize="{ minRows: 4, maxRows: 6 }" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -78,9 +78,10 @@
 
 <script setup lang="ts">
 import { Search } from '@element-plus/icons-vue'
+import moment from 'moment'
 import { defineComponent, computed, reactive, ref } from 'vue';
 import { useStore} from '../../store';
-import { FormInstance, FormRules, DateModelType } from 'element-plus'
+import { FormInstance, FormRules, DateModelType, ElMessage } from 'element-plus'
 defineComponent({
     name: "ApplyView",
 })
@@ -107,7 +108,7 @@ const pageCheckList = computed(()=> checksApplyList.value.slice((pageCurrent.val
 
 // 取消
 const handleClose = () => {
-    !dialogVisible.value
+    dialogVisible.value = false
 }
 // 添加审批
 const handleToApply = () => {
@@ -122,6 +123,7 @@ const handleChange = (value: number) => {
 const ruleFormRef = ref<FormInstance>()
 
 interface ApplyList {
+    applicantid: string,
     applicantname: string,   
     approverid: string,      
     approvername: string,    
@@ -132,13 +134,23 @@ interface ApplyList {
 
 // 所需收集的字段
 const ruleForm = reactive<ApplyList>({
+    applicantid: '',     // 审批人ID
     applicantname: '',   // 申请人姓名
     approverid: '',      // 审批人ID
     approvername: '',    // 审批人姓名
     note: '',            // 审批备注
     reason: '',          // 审批事由
-    time: ['', ''],            // 审批时间
+    time: ['', ''],      // 审批时间
 })
+
+// 自定义日期验证表单
+const validatorTime = (rule: unknown, value: [DateModelType, DateModelType], callback: (arg?: Error) => void) => {
+    if (!value[0] && !value[1]) {
+        callback(new Error('请选择审批时间'));
+    } else {
+        callback();
+    }
+}
 
 // 表单校验规则
 const rules = reactive<FormRules>({
@@ -149,7 +161,7 @@ const rules = reactive<FormRules>({
         { required: true, message: '请选择审批事由', trigger: 'blur' }
     ],
     time: [
-        { required: true, message: '请选择时间', trigger: 'blur' }
+        { validator: validatorTime, required: true,  message: '请选择审批时间', trigger: 'blur' }
     ],
     note: [
         { required: true, message: '请输入备注', trigger: 'blur' }
@@ -161,6 +173,27 @@ const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.validate((valid) => {
     if (valid) {
+        ruleForm.applicantid = usersInfo.value._id as string;  // 审批人ID
+        ruleForm.applicantname = usersInfo.value.name as string;  // 审批人姓名
+        ruleForm.approverid = (approver.value.find((v) => v.name === ruleForm.approvername) as {[index: string]: unknown} )._id as string ;   // 
+        ruleForm.time[0] = moment(ruleForm.time[0]).format('YYYY-MM-DD hh:mm:ss');
+        ruleForm.time[1] = moment(ruleForm.time[1]).format('YYYY-MM-DD hh:mm:ss');
+        store.dispatch('checks/postApply', ruleForm).then((res) => {
+            if (+res.errcode === 0) {
+                store.dispatch('checks/getApplyList', { applicantid: usersInfo.value._id }).then((res) => {
+                    if (+res.errcode === 0) {
+                        store.commit('checks/updateApplyList', res.rets);
+                    } else {
+                        ElMessage.error(res.errmsg || '审批信息获取失败')
+                    }
+                });
+                ElMessage.success('审批添加成功')
+                reset(ruleFormRef.value);
+                handleClose();
+            } else {
+                ElMessage.error('审批添加失败')
+            }
+        });
         console.log('大部分是否不打算', ruleForm);
     } else {
         console.log('error submit');
