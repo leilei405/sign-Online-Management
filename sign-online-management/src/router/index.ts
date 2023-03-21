@@ -44,6 +44,22 @@ const routes: Array<RouteRecordRaw> = [
           icon: 'finished',
           auth: true
         },
+        beforeEnter(to, from, next) {
+          const userInfos = (store.state as StateAll).users.infos;
+          const checksCheckList = (store.state as StateAll).checks.checkList;
+          if (_.isEmpty(checksCheckList)) {
+            store.dispatch('checks/getApplyList', { approverid: userInfos._id }).then((res) => {
+              if (+res.errcode === 0) {
+                store.commit('checks/updateCheckList', res.rets);
+                next();
+              } else {
+                ElMessage.error(res.errmsg || '审批页信息获取失败')
+              }
+            })
+          }else {
+            next();
+          }
+        }
       },
       {
         path: 'sign',
