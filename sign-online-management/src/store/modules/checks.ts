@@ -33,6 +33,9 @@ const actions: ActionTree<ChecksState, State> ={
     // 提交表单
     postApply: (context, payload) => {
         return http.post('checks/apply', payload);
+    },
+    putCheck: (context, payload) => {
+        return http.put('checks/apply', payload);
     }
 };
 const getters: GetterTree<ChecksState, State> ={
