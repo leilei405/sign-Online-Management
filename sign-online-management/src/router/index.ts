@@ -72,21 +72,29 @@ const routes: Array<RouteRecordRaw> = [
           auth: true
         },
         // 路由独享守卫
-        beforeEnter(to, from, next) {
+        async beforeEnter(to, from, next) {
           const userInfos = (store.state as StateAll).users.infos;
           const signsInfos = (store.state as StateAll).signs.infos;
+          const newsInfos = (store.state as StateAll).news.info;
           if (_.isEmpty(signsInfos)) {
-            store.dispatch('signs/getTime', { userid: userInfos._id }).then((res) => {
-              if (+res.errcode === 0) {
-                store.commit('signs/updateInfos', res.infos);
-                next();
-              } else {
-                ElMessage.error(res.errmsg || '用户打卡信息获取失败')
-              }
-            })
-          }else {
-            next();
+            const res = await store.dispatch('signs/getTime', { userid: userInfos._id })
+            if (+res.errcode === 0) {
+              store.commit('signs/updateInfos', res.infos);
+              next();
+            } else {
+              ElMessage.error(res.errmsg || '用户打卡信息获取失败')
+            }
           }
+          if (_.isEmpty(newsInfos)) {
+            const res = await store.dispatch('news/getRemind', { userid: userInfos._id })
+            if (+res.errcode === 0) {
+              store.commit('news/updateInfo', res.info)
+            } else {
+              return;
+            }
+          }
+            next();
+          
         }
       },
       {
@@ -104,6 +112,7 @@ const routes: Array<RouteRecordRaw> = [
           const userInfos = (store.state as StateAll).users.infos;
           const signsInfos = (store.state as StateAll).signs.infos;
           const checksApplyList = (store.state as StateAll).checks.applyList;
+          const newsInfos = (store.state as StateAll).news.info;
           // 修改路由独享守卫  处理多条数据
           // 审批数据集合： 过滤applyList
           if (_.isEmpty(signsInfos)) {
@@ -120,6 +129,14 @@ const routes: Array<RouteRecordRaw> = [
               store.commit('checks/updateApplyList', res.rets);
             } else {
               return ElMessage.error(res.errmsg || '审批信息获取失败')
+            }
+          }
+          if (_.isEmpty(newsInfos)) {
+            const res = await store.dispatch('news/getRemind', { userid: userInfos._id })
+            if (+res.errcode === 0) {
+              store.commit('news/updateInfo', res.info)
+            } else {
+              return;
             }
           }
           next();
